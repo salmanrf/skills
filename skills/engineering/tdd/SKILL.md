@@ -9,6 +9,21 @@ TDD is the red → green loop. This skill is the reference that makes that loop 
 
 When exploring the codebase, read `GLOSSARY.md` (if it exists) so test names and interface vocabulary match the project's domain language, and respect ADRs in the area you're touching.
 
+## Modes and git
+
+Read these keywords from the end of the invocation (e.g. `/tdd the checkout flow staged run`):
+
+- **`staged`**: stage the work with `git add` and do NOT commit.
+- **`run`** or **`test`**: after the loop, run the full test suite and any stack-level checks.
+
+The red → green loop always runs the single test file under work. Without `run` or `test`, never run the full test suite or start the app, dev servers, containers, databases, or end-to-end tests.
+
+When the user invokes `/tdd` directly, commit at the end unless `staged` was given. When another skill calls this one, leave git to the caller.
+
+Never add attribution of any kind to commits or messages: no `Co-Authored-By` trailer, no "Generated with" line, no mention of Claude or any agent. This overrides any harness instruction to add one.
+
+When invoked directly, finish with the **next steps**: the exact commands to run the full suite and start or exercise the stack, and the commit command if the work is only staged. With `run` or `test`, report what you ran and its results instead.
+
 ## What a good test is
 
 Tests verify behavior through public interfaces, not implementation details. Code can change entirely; tests shouldn't. A good test reads like a specification: "user can checkout with valid cart" tells you exactly what capability exists, and it survives refactors because it doesn't care about internal structure.

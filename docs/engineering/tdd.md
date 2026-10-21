@@ -24,6 +24,10 @@ That last row is a real gap. The skill decides *where* the seams go, but nothing
 
 [codebase-design](https://aihero.dev/skills-codebase-design) needs to be installed. `tdd` used to carry its own deep-module and interface-design notes; v1.0 deleted them in favour of the shared skill, and `tdd` now uses its interface-design vocabulary. Nothing else; the skill is [stateless](https://www.aihero.dev/ai-coding-dictionary/stateless) and writes no files of its own.
 
+## Modes: `staged`, `run`, `test`
+
+Invoked directly, `tdd` commits at the end. Pass `staged` to only stage the work. The loop runs the single test file under work; the full suite and the stack (app, servers, containers, end-to-end tests) run only when you pass `run` or `test`, for example `/tdd the checkout flow staged test`. Without them, the run ends with the commands to run and test the work yourself. When another skill such as [implement](https://aihero.dev/skills-implement) calls `tdd`, git is left to the caller. Nothing it commits carries attribution.
+
 ## The loop, and the seam it runs at
 
 The skill rests on three terms.
@@ -82,6 +86,7 @@ No. Run against one ticket, it can propose work that belongs to a sibling ticket
 - Expected values in assertions are literals you can trace to the spec, not values recomputed the way the code computes them.
 - Renaming an internal function breaks nothing in the suite.
 - Mocks appear only at external boundaries (the payment API, the clock) and never around your own modules.
+- The full suite and the stack run only when you passed `run` or `test`, and no commit carries attribution.
 
 ## Where it fits
 

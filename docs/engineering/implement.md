@@ -35,10 +35,24 @@ A run has five steps, in order:
 1. Read the ticket or spec and work out the seams.
 2. Drive [tdd](https://aihero.dev/skills-tdd) at the pre-agreed seams, one red-green slice at a time.
 3. Typecheck often, run single test files as it goes.
-4. Run the full test suite once, at the end.
-5. Run [code-review](https://aihero.dev/skills-code-review), then commit to the current branch.
+4. With `run` or `test`, run the full test suite and the stack once, at the end.
+5. Run [code-review](https://aihero.dev/skills-code-review), then commit to the current branch (or only stage, with `staged`), and print the next steps.
 
 One run covers one ticket. The tickets [to-tickets](https://aihero.dev/skills-to-tickets) produces are tracer-bullet vertical slices sized to fit a single fresh [context window](https://www.aihero.dev/ai-coding-dictionary/context-window), so the intended rhythm is: clear context, implement one ticket, commit, clear again. Each ticket is self-contained, so you can discard the previous ticket's context.
+
+## Modes: `staged`, `run`, `test`
+
+Trailing keywords change how a run ends:
+
+| Invocation | Git | Verification |
+| --- | --- | --- |
+| `/implement #42` | commits | typecheck and single test files only, then prints the commands to run the full suite and the stack |
+| `/implement #42 staged` | stages, no commit | same as above, plus the commit command |
+| `/implement #42 staged test` (or `run`) | stages, no commit | also runs the full suite and the stack, and reports the results |
+
+`run` and `test` also work without `staged`. Without either one, the skill never runs the full suite or starts the app, servers, containers, or end-to-end tests. In `staged` mode it asks `code-review` to review `git diff --cached`, since there is no commit range to review.
+
+No commit, message, or PR body it writes carries attribution: no `Co-Authored-By` trailer and no "Generated with" line.
 
 ## Pre-agreed seams
 
@@ -58,7 +72,7 @@ Not with `/implement`: one invocation, one ticket. For a whole spec in one run, 
 
 **Can it open a pull request instead of committing?**
 
-Not built in. It commits straight to the current branch. Several people find this too eager, because the code lands before they can verify it works. There is no configuration flag and no PR mode. People override it in the invocation ("commit to a branch and open a PR") or by editing their local copy of the skill. When the agent does write the PR, [pr](https://aihero.dev/skills-pr) shapes its body.
+Not built in. It commits straight to the current branch unless you pass `staged`, which leaves the work staged so you can verify it before anything lands. There is no PR mode. People override it in the invocation ("commit to a branch and open a PR") or by editing their local copy of the skill. When the agent does write the PR, [pr](https://aihero.dev/skills-pr) shapes its body.
 
 **`code-review` says it cannot see my changes.**
 
@@ -78,8 +92,9 @@ The agent resolved `#2` against another numbered list in context, such as a todo
 
 - The session opens by reading the ticket or spec and restating what it will build, rather than asking you what to build.
 - You can see an actual `tdd` Skill tool call in the trace, not just tests appearing in the diff.
-- Typechecks and single test files run repeatedly during the run, and the full suite runs once near the end.
-- The run reaches a commit on your current branch without you prompting it to carry on.
+- Typechecks and single test files run repeatedly during the run. The full suite and the stack run only when you passed `run` or `test`.
+- The run reaches a commit on your current branch (or staged changes, with `staged`) without you prompting it to carry on, and it ends with the commands to run and test the work.
+- No commit carries a `Co-Authored-By` trailer or any other attribution.
 - The diff is one ticket's worth of change: a vertical slice through every layer, not several tickets swept together.
 
 ## Where it fits
