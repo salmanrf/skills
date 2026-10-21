@@ -33,6 +33,16 @@ Before it writes anything, `to-spec` sketches the **seams** where the feature wi
 
 Other skills use those agreed seams later. [tdd](https://aihero.dev/skills-tdd) works only at seams you agreed in advance. [code-review](https://aihero.dev/skills-code-review) reviews the diff against the spec, so a seam nobody agreed to shows up as a review finding. Both connections go through this document. That is why you should take the seam conversation seriously here, and not leave it for implementation.
 
+## Contracts, not prose
+
+When the spec introduces or changes an endpoint, a function, or a type, it writes the **contract** down in its Contracts section, so a fresh session builds against an exact shape instead of guessing one from prose.
+
+- **Types** come first: only the ones this spec introduces or changes, written out in full. Existing types are referred to by name.
+- **Endpoints** list method and path, who may call it, path params, query, body, and every response, error responses included.
+- **Functions and methods** get their full signature and docstring, with no body, named by their owning module or class.
+
+Docstrings follow your project's documented convention, found in `.claude/rules/`, `AGENTS.md`, `CLAUDE.md`, or a coding-standards file. Without one, the skill uses `@params`, `@return` (errors included), and a one-line description. A changed contract appears in full, marked **(changed)**, with one line saying what differs. Contracts are the only code in the spec: no function bodies, no file paths.
+
 ## Common questions
 
 **Where did `/to-prd` go?**
@@ -68,6 +78,7 @@ A tracker issue may not return a very large spec in full, and there is no local 
 - It shows you the seams before it writes, and proposes as few as it can.
 - It uses your project's nouns, not generic product-management boilerplate.
 - You remember making every decision in it. It invented nothing to fill a section.
+- Every new endpoint, function, and type has a contract, and every type is defined before anything references it.
 - The out-of-scope section lists real things. The things you refused are usually the most useful lines on the page.
 
 ## Where it fits
