@@ -1,12 +1,12 @@
 ---
 name: to-spec
-description: "Turn the current conversation into a spec and publish it to the project issue tracker: no interview, just synthesis of what you've already discussed."
+description: "Turn the current conversation into a spec written as a local markdown file under docs/specs/: no interview, just synthesis of what you've already discussed."
 disable-model-invocation: true
 ---
 
 This skill takes the current conversation context and codebase understanding and produces a spec. Do NOT interview the user; just synthesize what you already know.
 
-The issue tracker and triage label vocabulary should have been provided to you. If not, tell the user to run `/setup-matt-pocock-skills`.
+The spec is ALWAYS a local markdown file and ONLY a local markdown file: `docs/specs/spec-<ticket>-<slug>.md` at the repo root. Never publish it to an issue tracker, never create an issue, never apply a label. You may still read issues or tickets the user references as input.
 
 ## Process
 
@@ -16,7 +16,13 @@ The issue tracker and triage label vocabulary should have been provided to you. 
 
 Check with the user that these seams match their expectations.
 
-3. Write the spec using the template below, then publish it to the project issue tracker. Apply the `ready-for-agent` triage label - no need for additional triage.
+3. Write the spec using the template below to `docs/specs/spec-<ticket>-<slug>.md`, creating `docs/specs/` if needed:
+
+   - `<ticket>` is the ticket key, taken from the invocation, the conversation, or the current branch name (e.g. `BF-1234`). With no ticket anywhere, drop it: `spec-<slug>.md`.
+   - `<slug>` is a short kebab-case name for the feature (e.g. `room-sync`), giving `docs/specs/spec-BF-1234-room-sync.md`.
+   - If the file already exists, ask before overwriting it.
+
+   Do not commit it. Finish by printing the file's path.
 
 <spec-template>
 

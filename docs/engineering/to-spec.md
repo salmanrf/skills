@@ -1,6 +1,6 @@
 ## What it does
 
-`to-spec` turns the conversation you have just had into a **[spec](https://www.aihero.dev/ai-coding-dictionary/spec)**, and publishes it to your issue tracker as a single issue.
+`to-spec` turns the conversation you have just had into a **[spec](https://www.aihero.dev/ai-coding-dictionary/spec)**, and writes it as a local markdown file at `docs/specs/spec-<ticket>-<slug>.md` (e.g. `docs/specs/spec-BF-1234-room-sync.md`). It never publishes to an issue tracker.
 
 It does not interview you. When you reach for it, the deciding is already done. So it synthesises what is known (from the thread, the codebase, your `GLOSSARY.md` and ADRs) and does not start a new round of questions. The spec records decisions you already made. It is not a place to make new ones.
 
@@ -19,7 +19,7 @@ Reach for it when the build is too big for one agent [session](https://www.aiher
 
 ## Prerequisites
 
-`to-spec` publishes the spec as an issue, so [setup-matt-pocock-skills](https://aihero.dev/skills-setup-matt-pocock-skills) must first configure a tracker and the triage-label vocabulary for this repo. Either kind of tracker works: a real tracker like GitHub, or local markdown files under `.scratch/`, which work with no extra setup.
+None. `to-spec` writes a local file, so it needs no tracker setup. The ticket key in the file name comes from the invocation, the conversation, or the branch name; without one the file is `spec-<slug>.md`. It asks before overwriting an existing spec, and it does not commit the file.
 
 ## The spec is a decision record
 
@@ -48,8 +48,8 @@ Docstrings follow your project's documented convention, found in `.claude/rules/
 **Where did `/to-prd` go?**
 It is this skill, renamed in v1.1. "Spec" is now the one term used throughout, and the old `to-prd` slug no longer works, so reinstall under the new name. The old vocabulary is replaced by the pair *spec* and *tickets*. The spec is the destination and the decisions that fix it. The [tickets](https://www.aihero.dev/ai-coding-dictionary/ticket) are the steps that get there. If you change direction, delete the unfinished tickets and keep the spec.
 
-**Why does the spec get the `ready-for-agent` label? I don't want an agent implementing off it.**
-The label means "no further triage needed": the document is complete enough for an agent to work from. It marks an input, not a work order. But [AFK](https://www.aihero.dev/ai-coding-dictionary/afk) agents that poll for `ready-for-agent` cannot see that difference. They will try to build the whole spec in one run instead of picking up the ticket slices. This is the most-reported problem with the skill. Until it changes, exclude the parent spec explicitly in your AFK agent's prompt, or remove the label after `/to-tickets` has run.
+**Why a local file and not a tracker issue?**
+A file has no triage label, so [AFK](https://www.aihero.dev/ai-coding-dictionary/afk) agents polling the tracker never mistake the spec for a work order. It is also never truncated on read, it can be reviewed in a diff, and `/to-tickets docs/specs/spec-<ticket>-<slug>.md` reads it back in full.
 
 **Why not go straight from grilling to `/to-tickets` and skip the spec?**
 Often you should. The spec is worth its step only on multi-session work. Its value is that the tickets are disposable and the spec is not. Each ticket is sized for one fresh context window and then gets deleted or closed, while the spec stays as the one place that records the reasoning behind them. On a single-session change, that gives you nothing, and you pay for an extra synthesis step where the [model](https://www.aihero.dev/ai-coding-dictionary/model) can drift. Go from grilling to `/implement`.
@@ -69,12 +69,13 @@ Less well, and this is a known limitation. The template relies heavily on user s
 **Will it check the tracker for related work, or cite the ADRs it's respecting?**
 No to both. It reads and follows the ADRs for the area it touches, but it does not link them. It also does not search the tracker for overlapping issues before it writes, so a spec can duplicate work that someone already filed, and nothing warns you. If the area is busy, search the tracker yourself first.
 
-**`/to-tickets` couldn't read my spec: it kept truncating.**
-A tracker issue may not return a very large spec in full, and there is no local copy to use instead. To fix this, do not [clear](https://www.aihero.dev/ai-coding-dictionary/clearing) or [compact](https://www.aihero.dev/ai-coding-dictionary/compaction) between `/to-spec` and `/to-tickets`. Run them in the same window, and `/to-tickets` never has to fetch the spec again.
+**Can I clear context between `/to-spec` and `/to-tickets`?**
+Yes. The spec is a local file, so pass its path: `/to-tickets docs/specs/spec-<ticket>-<slug>.md`.
 
 ## It's working if
 
 - It starts writing instead of asking you a new round of questions.
+- The spec lands in `docs/specs/spec-<ticket>-<slug>.md`, and nothing appears on your issue tracker.
 - It shows you the seams before it writes, and proposes as few as it can.
 - It uses your project's nouns, not generic product-management boilerplate.
 - You remember making every decision in it. It invented nothing to fill a section.
